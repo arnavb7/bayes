@@ -163,8 +163,20 @@ def eliminateWithCallTracking(callTrackingList=None):
                     "eliminationVariable:" + str(eliminationVariable) + "\n" +\
                     "unconditionedVariables: " + str(factor.unconditionedVariables()))
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        unconditioned = factor.unconditionedVariables()
+        unconditioned.remove(eliminationVariable)
+        conditioned = factor.conditionedVariables()
+
+        newFactor = Factor(unconditioned, conditioned, factor.variableDomainsDict())
+
+        for assignment in newFactor.getAllPossibleAssignmentDicts():
+            total = 0
+            for val in factor.variableDomainsDict()[eliminationVariable]:
+                assignment[eliminationVariable] = val
+                total += factor.getProbability(assignment)
+            newFactor.setProbability(assignment, total)
+
+        return newFactor
 
     return eliminate
 
@@ -218,6 +230,26 @@ def normalize(factor):
                             "so that total probability will sum to 1\n" + 
                             str(factor))
 
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    variableDomainsDict = factor.variableDomainsDict()
+
+    unconditioned = set()
+    conditioned = factor.conditionedVariables()
+    for var in factor.unconditionedVariables():
+        if len(variableDomainsDict[var]) == 1:
+            conditioned.add(var)
+        else:
+            unconditioned.add(var)
+
+    total = 0
+    for assignment in factor.getAllPossibleAssignmentDicts():
+        total += factor.getProbability(assignment)
+
+    if total == 0:
+        return None
+
+    newFactor = Factor(unconditioned, conditioned, variableDomainsDict)
+    for assignment in newFactor.getAllPossibleAssignmentDicts():
+        newFactor.setProbability(assignment, factor.getProbability(assignment) / total)
+
+    return newFactor
 
