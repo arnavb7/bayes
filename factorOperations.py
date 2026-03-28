@@ -107,7 +107,7 @@ def joinFactors(factors):
         allConditioned |= factor.conditionedVariables()
     # conditioned vars that are also in unconditioned set become unconditioned
     allConditioned -= allUnconditioned
-    newFactor = Factor(allUnconditioned, allConditioned, list(factors)[0].variableDomainsDict())
+    newFactor = Factor(allUnconditioned, allConditioned, factors[0].variableDomainsDict())
 
     for assignment in newFactor.getAllPossibleAssignmentDicts():
         prob = 1
